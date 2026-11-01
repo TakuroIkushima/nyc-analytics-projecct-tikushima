@@ -24,7 +24,8 @@ cleaned AS (
            filing_representative_last_name,
            applicant_first_name,
            applicants_middle_initial,
-           applicant_last_name
+           applicant_last_name,
+           zip
 
        ),
 
