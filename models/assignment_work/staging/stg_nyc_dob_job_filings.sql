@@ -10,38 +10,39 @@ cleaned AS (
        -- Get all columns from source, except ones we're transforming below
        -- To do cleaning on them or explicitly cast them as types just in case
        * EXCEPT (
-           unique_key,
-           created_date,
-           closed_date,
-           agency,
-           agency_name,
-           complaint_type,
-           descriptor,
-           status,
+           job_filing_number,
+           filing_date,
+           approved_date,
+           current_status_date,
            incident_zip,
            borough,
            incident_address,
-           street_name,
-           cross_street_1,
-           cross_street_2,
            latitude,
            longitude,
-           open_data_channel_type
+           filing_representative_first_name,
+           filing_representative_middle_initial,
+           filing_representative_last_name,
+           applicant_first_name,
+           applicants_middle_initial,
+           applicant_last_name
+
        ),
 
        -- Identifiers
-       CAST(unique_key AS STRING) AS request_id,
+       CAST(job_filing_number AS STRING) AS job_filing_id,
 
        -- Date/Time
-       CAST(created_date AS TIMESTAMP) AS created_date,
-       CAST(closed_date AS TIMESTAMP) AS closed_date,
+       CAST(filing_date AS TIMESTAMP) AS filing_date,
+       CAST(approved_date AS TIMESTAMP) AS approved_date,
+       CAST(current_status_date AS STRING) AS current_status_date,
 
        -- Request details
-       CAST(agency AS STRING) AS agency,
-       CAST(agency_name AS STRING) AS agency_name,
-       CAST(complaint_type AS STRING) AS complaint_type,
-       CAST(descriptor AS STRING) AS descriptor,
-       UPPER(TRIM(CAST(status AS STRING))) AS status,
+       CAST(filing_representative_first_name AS STRING) AS filing_representative_first_name,
+       CAST(filing_representative_middle_initial AS STRING) AS filing_representative_middle_initial,
+       CAST(filing_representative_last_name AS STRING) AS filing_representative_last_name,
+       CAST(applicant_first_name AS STRING) AS applicant_first_name,
+       CAST(applicants_middle_initial AS STRING) AS applicants_middle_initial,
+       CAST(applicant_last_name AS STRING) AS applicant_last_name,
 
        -- Location - clean zip code, handling several common zip code data problems
        CASE
@@ -66,14 +67,9 @@ cleaned AS (
        END AS borough,
 
        CAST(incident_address AS STRING) AS incident_address,
-       CAST(street_name AS STRING) AS street_name,
-       CAST(cross_street_1 AS STRING) AS cross_street_1,
-       CAST(cross_street_2 AS STRING) AS cross_street_2,
        CAST(latitude AS DECIMAL) AS latitude,
        CAST(longitude AS DECIMAL) AS longitude,
 
-       -- Clearer column name as well for this one
-       CAST(open_data_channel_type AS STRING) AS method_of_submission,
 
        -- Metadata
        CURRENT_TIMESTAMP() AS _stg_loaded_at
@@ -81,16 +77,15 @@ cleaned AS (
    FROM source
 
    -- Filters
-   WHERE (agency = 'DOT' OR agency_name LIKE '%Transportation%')
-   AND unique_key IS NOT NULL
-   AND created_date IS NOT NULL
-   AND CAST(created_date AS DATE) >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 YEAR)
+   WHERE job_filing_number IS NOT NULL
+   AND filing_date IS NOT NULL
+   AND CAST(filing_date AS DATE) >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 YEAR)
    AND borough IS NOT NULL
 
    -- Deduplicate
-   QUALIFY ROW_NUMBER() OVER (PARTITION BY unique_key ORDER BY created_date DESC) = 1
+   QUALIFY ROW_NUMBER() OVER (PARTITION BY job_filing_number ORDER BY filing_date DESC) = 1
 )
 
 SELECT * FROM cleaned
--- All should be part of this table after running: stg_nyc_311_dot
+-- All should be part of this table after running: stg_nyc_dob_job_filings
 
