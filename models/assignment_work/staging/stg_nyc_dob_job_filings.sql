@@ -26,7 +26,6 @@ cleaned AS (
            applicants_middle_initial,
            applicant_last_name,
            zip
-
        ),
 
        -- Identifiers
