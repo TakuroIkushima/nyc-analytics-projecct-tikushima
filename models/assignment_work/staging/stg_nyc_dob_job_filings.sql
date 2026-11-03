@@ -28,7 +28,7 @@ cleaned AS (
            zip,
            signoff_date,
            location_type,
-           first_permit_date,
+           first_permit_date
        ),
 
        -- Identifiers
@@ -48,6 +48,7 @@ cleaned AS (
        CAST(applicant_first_name AS STRING) AS applicant_first_name,
        CAST(applicants_middle_initial AS STRING) AS applicants_middle_initial,
        CAST(applicant_last_name AS STRING) AS applicant_last_name,
+       CAST(location_type AS STRING) AS location_type,
 
        -- Location - clean zip code, handling several common zip code data problems
        CASE
