@@ -28,6 +28,7 @@ cleaned AS (
            zip,
            signoff_date,
            location_type
+           first_permit_date,
        ),
 
        -- Identifiers
@@ -36,8 +37,9 @@ cleaned AS (
        -- Date/Time
        CAST(filing_date AS TIMESTAMP) AS filing_date,
        CAST(approved_date AS TIMESTAMP) AS approved_date,
-       CAST(current_status_date AS STRING) AS current_status_date,
+       CAST(current_status_date AS TIMESTAMP) AS current_status_date,
        CAST(signoff_date AS TIMESTAMP) AS signoff_date,
+       CAST(first_permit_date AS TIMESTAMP) AS first_permit_date,
 
        -- Request details
        CAST(filing_representative_first_name AS STRING) AS filing_representative_first_name,
