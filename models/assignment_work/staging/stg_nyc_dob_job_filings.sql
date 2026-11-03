@@ -27,7 +27,7 @@ cleaned AS (
            applicant_last_name,
            zip,
            signoff_date,
-           location_type
+           location_type,
            first_permit_date,
        ),
 
