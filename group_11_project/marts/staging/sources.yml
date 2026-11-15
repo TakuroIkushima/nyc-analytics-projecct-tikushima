@@ -1,15 +1,15 @@
 version: 2
 sources:
-  - name: raw
+  - name: raw_project
     description: Raw data loaded from NYC Open Data
     database: takuro-data-warehouse
-    schema: group_project 
+    schema: group_project
     tables:
       - name: primary_data_open_restaurant_inspections
         description: |
-          restaurant open inspections.
-          One row per service request.
+          NYC Open Restaurant inspections
+          One row per service inspection.
       - name: source_service_requests_project
         description: |
-          Service requests
-          One row per application.
+          NYC 311 requests filtered tocomplaint_type=Outdoor Dining
+          one row per request.
