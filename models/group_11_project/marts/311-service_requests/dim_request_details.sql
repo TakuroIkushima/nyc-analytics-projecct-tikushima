@@ -5,13 +5,13 @@ WITH stg_311 AS (
 distinct_requests AS (
 
     SELECT DISTINCT
-        problem,
-        problem_detail,
+        complaint_type AS problem,
+        descriptor AS problem_detail,
         additional_details,
         resolution_description,
         status
     FROM stg_311
-    WHERE problem IS NOT NULL
+    WHERE complaint_type IS NOT NULL
 
 ),
 
