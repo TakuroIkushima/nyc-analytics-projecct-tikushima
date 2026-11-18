@@ -42,10 +42,9 @@ fact_311_data AS (
         s.method_of_submission AS open_data_channel_type,
         s.latitude,
         s.longitude
+
     FROM stg_311 s
 
-    -- Left joins because you want all the rows from staging in the fact rep'd, with key information from dimensions
-    -- JOIN ON the items that make up the surrogate key in the dimension
     LEFT JOIN dim_date cd
         ON CAST(s.created_date AS DATE) = cd.full_date
 
@@ -53,12 +52,11 @@ fact_311_data AS (
         ON CAST(s.closed_date AS DATE) = xd.full_date
 
     -- IS NOT DISTINCT FROM so a NULL zip / borough matches the dim row
-    -- postcode in the dim is the 5-digit extract of zip, so do the same here
     LEFT JOIN dim_location l
         ON  s.borough IS NOT DISTINCT FROM l.borough
         AND REGEXP_EXTRACT(s.zip, r'^[0-9]{5}') IS NOT DISTINCT FROM l.postcode
 
-    -- complaint_type / descriptor are stored as problem / problem_detail in the dim
+    -- Complaint_type / descriptor are stored as problem / problem_detail in the dim
     LEFT JOIN dim_request r
         ON  s.complaint_type IS NOT DISTINCT FROM r.problem
         AND s.descriptor IS NOT DISTINCT FROM r.problem_detail
