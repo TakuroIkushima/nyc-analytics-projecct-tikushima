@@ -12,7 +12,7 @@ dim_details AS (
 ),
 
 dim_location AS (
-    SELECT * FROM {{ ref('dim_locations_details') }}
+    SELECT * FROM {{ ref('dim_location_details') }}
 ),
 
 dim_date AS (
