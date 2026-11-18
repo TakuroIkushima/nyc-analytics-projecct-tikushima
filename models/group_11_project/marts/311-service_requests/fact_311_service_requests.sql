@@ -3,14 +3,13 @@ WITH stg_311 AS (
     SELECT * FROM {{ ref('stg_source_service_requests_project') }}
 ),
 
--- All the dimensions in their own CTEs for easy reference
 dim_date AS (
     SELECT * FROM {{ ref('dim_date_details') }}
 ),
 
 dim_location AS (
     SELECT * FROM {{ ref('dim_location_details') }}
-    WHERE location_id != '-1'  
+    WHERE location_id != '-1'
 ),
 
 dim_request AS (
@@ -28,25 +27,19 @@ fact_311_data AS (
     SELECT
         s.request_id AS unique_key,
 
-        -- Date keys
         CASE WHEN s.created_date IS NULL THEN '-1' ELSE cd.date_id END AS created_date,
         CASE WHEN s.closed_date  IS NULL THEN '-1' ELSE xd.date_id END AS closed_date,
-        s.due_date,
-        s.resolution_action_updated_date,
 
-        -- Dimension keys, '-1' when no dimension row matches
         COALESCE(l.location_id, '-1')          AS request_location_id,
         COALESCE(r.request_type_details, '-1') AS request_type,
         COALESCE(g.sr_geo_id, '-1')            AS geo_id,
 
         s.agency,
         s.agency_name,
-        s.community_board,
-        s.council_district,
         s.method_of_submission AS open_data_channel_type,
         s.latitude,
-        s.longitude,
-        s.bbl
+        s.longitude
+
     FROM stg_311 s
 
     LEFT JOIN dim_date cd
